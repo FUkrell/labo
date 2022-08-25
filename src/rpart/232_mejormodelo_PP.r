@@ -129,4 +129,7 @@ cat( ganA[ , mean(public) ], ganB[ , mean(public) ], ganC[ , mean(public) ] , "\
 
 cat( ganA[ , mean(private) ], ganB[ , mean(private) ], ganC[ , mean(private) ] , "\n")
 
+cat( ganA[ , sd(public) ], ganB[ , sd(public) ], ganC[ , sd(public) ] , "\n")
+
+cat( ganA[ , sd(private) ], ganB[ , sd(private) ], ganC[ , sd(private) ] , "\n")
 
