@@ -21,7 +21,7 @@ particionar  <- function( data,  division, agrupa="",  campo="fold", start=1, se
 #------------------------------------------------------------------------------
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("C:\\Users\\PC\Desktop\\Especializacion UBA\\DMEyF")   #Establezco el Working Directory
+setwd("C:\\Users\\PC\\Desktop\\Especializacion UBA\\DMEyF")   #Establezco el Working Directory
 
 #cargo los datos
 dataset  <- fread("./datasets/competencia1_2022.csv")
@@ -34,10 +34,10 @@ dataset  <- dataset[ clase_ternaria!= "" ]
 particionar( dataset, division=c(7,3), agrupa="clase_ternaria", seed= 102191 )  #Cambiar por la primer semilla de cada uno !
 
 
-param_basicos  <- list( "cp"=         0,  #complejidad minima
-                        "minsplit"=  10,  #minima cantidad de registros en un nodo para hacer el split
-                        "minbucket"=  2,  #minima cantidad de registros en una hoja
-                        "maxdepth"=  10 ) #profundidad máxima del arbol
+param_basicos  <- list( "cp"=         -1,  #complejidad minima
+                        "minsplit"=  800,  #minima cantidad de registros en un nodo para hacer el split
+                        "minbucket"=  50,  #minima cantidad de registros en una hoja
+                        "maxdepth"=  6 ) #profundidad máxima del arbol
 
 #genero el modelo
 modelo  <- rpart("clase_ternaria ~ .",     #quiero predecir clase_ternaria a partir del resto
@@ -77,4 +77,6 @@ cat( "Estimulos: ", estimulos, "\n" )
 cat( "Aciertos (BAJA+2): ",  aciertos,  "\n" )
 
 cat( "Ganancia en testing (normalizada): ", ganancia_test_normalizada, "\n" )
+
+
 
