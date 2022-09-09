@@ -55,11 +55,11 @@ dapply  <- dataset[ foto_mes==202103 ]  #defino donde voy a aplicar el modelo
 
 modelo  <- rpart(formula=   "clase_binaria ~ . -clase_ternaria",
                  data=      dtrain,  #los datos donde voy a entrenar
-                 xval=         0,
-                 cp=          -0.54,#  -0.89
-                 minsplit=  1073,   # 621
-                 minbucket=  278,   # 309
-                 maxdepth=     9 )  #  12
+                 xval=         5,
+                 cp=          -0.2,#  -0.89
+                 minsplit=  1156,   # 621
+                 minbucket=  117,   # 309
+                 maxdepth=     7 )  #  12
 
 
 #----------------------------------------------------------------------------
@@ -118,6 +118,7 @@ for( corte  in  c( 7500, 8000, 8500, 9000, 9500, 10000, 10500, 11000 ) )
 
 
   fwrite( dfinal[ , list(numero_de_cliente, Predicted) ], #solo los campos para Kaggle
-           file= paste0( "./exp/QuintaEntrega/KA5100_001_",  corte, ".csv"),
+           file= paste0( "./exp/QuintaEntrega/KA5300_001_",  corte, ".csv"),
            sep=  "," )
 }
+

@@ -35,8 +35,8 @@ kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 hs  <- makeParamSet(
           makeNumericParam("cp"       , lower=  -1.0, upper=    0.1),
-          makeNumericParam("minsplit" , lower=   1,   upper= 5000 ),
-          makeNumericParam("minbucket", lower=   1,   upper= 1000 ),
+          makeNumericParam("minsplit" , lower=  200,   upper= 5000 ),
+          makeNumericParam("minbucket", lower=   100,   upper= 1000 ),
           makeIntegerParam("maxdepth" , lower=   3L,  upper=   20L),  #la letra L al final significa ENTERO
           forbidden = quote( minbucket > 0.5*minsplit ) )             # minbuket NO PUEDE ser mayor que la mitad de minsplit
 
@@ -132,7 +132,7 @@ ArbolesCrossValidation  <- function( semilla, data, param, qfolds, pagrupa )
                           seq(qfolds), # 1 2 3 4 5
                           MoreArgs= list( data, param), 
                           SIMPLIFY= FALSE,
-                          mc.cores= 5 )   #debe ir 1 si es Windows
+                          mc.cores=1 )   #debe ir 1 si es Windows
 
   data[ , fold := NULL ]
 
@@ -157,7 +157,7 @@ EstimarGanancia  <- function( x )
                            ksemilla_azar,
                            MoreArgs= list ( dtrain, param=x, qfolds= xval_folds, pagrupa= "clase_ternaria" ),
                            SIMPLIFY= FALSE,
-                           mc.cores = 5 )  #debe ir 1 si es Windows
+                           mc.cores = 1 )  #debe ir 1 si es Windows
 
 
    ganancia_promedio  <- mean( unlist( vganancias ) )
@@ -173,10 +173,20 @@ EstimarGanancia  <- function( x )
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
 
-setwd( "~/buckets/b1/" )
+setwd( "C:\\Users\\PC\\Desktop\\Especializacion UBA\\DMEyF" )
 
 #cargo el dataset, aqui debe poner  SU RUTA
 dataset  <- fread("./datasets/competencia1_2022.csv")   #donde entreno
+
+#Creo unas variables segun como arranca el feature, no uso la c por que se complica
+colnames<-colnames(dataset)
+Lista_m <- colnames[colnames %like% "^m"]
+
+Lista_t <- colnames[colnames %like% "^t"]## var_x vector que tiene las variables que empiezan con m
+
+dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
+
+dataset[ , suma_t := rowSums(.SD), .SDcols = Lista_t ]
 
 #creo la clase_binaria  SI= {BAJA+1, BAJA+2}  NO={CONTINUA}
 dataset[ foto_mes==202101, clase_binaria :=  ifelse( clase_ternaria=="CONTINUA", "NO", "SI" ) ]
