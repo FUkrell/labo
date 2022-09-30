@@ -21,9 +21,33 @@ dataset[ foto_mes==202101,
          clase_binaria :=  ifelse( clase_ternaria=="CONTINUA", "NO", "SI" ) ]
 
 #Creo una identica
-dataset[, rctrx_quarter:=frank(ctrx_quarter-1)/.N]
+# Antes de rankear creo dos listas vacias donde van a agregarse los campos con valores negativos o lo que rompa
+negativos <- c()
+otros <- c()
+Lista_m <- colnames[colnames %like% "^m"]
 
+Lista_t <- colnames[colnames %like% "^t"]## var_x vector que tiene las variables que empiezan con m
 
+dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
+rankear<- c(Lista_t,Lista_m,mcuenta_corriente,cdescubierto_preacordado,mcuentas_saldo,mcuentas_saldo)
+for (campo in rankear) {
+#Si algún campo falla en el if lo mando a la lista otros
+  tryCatch(
+    {
+     # verifico que el campo sea de valores positivos
+      if (min(dataset[, get(campo)]) >= 0) {
+        dataset[, paste0("auto_r_", campo, sep = "") := (frankv(dataset, cols = campo) - 1) / (length(dataset[, get(campo)]) - 1)] # rankeo entre 0 y 1
+        dataset[, paste0(campo) := NULL] # elimino la variable original
+      } else {
+        negativos <- c(negativos, campo)
+      }
+    },
+    # por si algun campo no tiene valor minimo o hay un typo en la lista
+    error = function(e) {
+      otros <- c(otros, campo)
+    }
+  )
+}
 
 dtrain  <- dataset[ foto_mes==202101 ]  #defino donde voy a entrenar
 dapply  <- dataset[ foto_mes==202103 ]  #defino donde voy a aplicar el modelo
