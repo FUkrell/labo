@@ -129,7 +129,7 @@ setorder( tb_entrega, -prob )
 
 #genero archivos con los  "envios" mejores
 #deben subirse "inteligentemente" a Kaggle para no malgastar submits
-cortes <- seq( 5000, 12000, by=500 )
+cortes <- seq( 5000, 12000, by=250 )
 for( envios  in  cortes )
 {
   tb_entrega[  , Predicted := 0L ]
