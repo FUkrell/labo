@@ -16,27 +16,77 @@ require("lightgbm")
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento  <- "KA7240"
+PARAM$experimento  <- "KA7242"
 
 PARAM$input$dataset       <- "./datasets/competencia2_2022.csv.gz"
 PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
-PARAM$finalmodel$max_bin           <-     31
-PARAM$finalmodel$learning_rate     <-      0.0305962538543662   
-PARAM$finalmodel$num_iterations    <-    504
-PARAM$finalmodel$num_leaves        <-   262
-PARAM$finalmodel$min_data_in_leaf  <-   5465
-PARAM$finalmodel$feature_fraction  <-     0.806620945
+PARAM$finalmodel$max_bin           <-     80
+PARAM$finalmodel$max_depth         <-     6
+PARAM$finalmodel$learning_rate     <-    0.0445824122395491
+PARAM$finalmodel$num_iterations    <-    461
+PARAM$finalmodel$num_leaves        <-   401
+PARAM$finalmodel$min_data_in_leaf  <-   6177
+PARAM$finalmodel$feature_fraction  <-     0.796566367624373
 PARAM$finalmodel$semilla           <- 1000019
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
-setwd( "~/buckets/b1" )
+setwd( "C:\\Users\\PC\\Desktop\\Especializacion UBA\\DMEyF" )
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
+
+
+
+
+#Feature engineering
+#dataset[ , campo1 := as.integer( (mcaja_ahorro<141.47) & ( mtarjeta_visa_consumo<1553.0 ) ) ]
+#dataset[ , campo2 := as.integer( (mcaja_ahorro<141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<1553.0  ) & ( mtarjeta_master_consumo<547.01 | is.na(mtarjeta_master_consumo) ) ) ]
+#dataset[ , campo3 := as.integer( (mcaja_ahorro<141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<1553.0  ) & ( mtarjeta_master_consumo>=547.01  ) ) ]
+#dataset[ , campo4 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<2003.7) & ( mpasivos_margen<231.5  ) ) ]
+#dataset[ , campo5 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<2003.7) & ( mpasivos_margen<231.5 | is.na(mpasivos_margen) ) )  ]
+#dataset[ , campo6 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo>=2003.7 | is.na(mtarjeta_visa_consumo) ) & ( cpayroll_trx<1  ) ) ]
+#dataset[ , campo7 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo>=2003.7 | is.na(mtarjeta_visa_consumo) ) & ( cpayroll_trx>=1 | is.na(cpayroll_trx) ) ) ]
+#dataset[, Tienempayroll:=as.integer(mpayroll==0)]
+#dataset[, Tienempayroll2:=as.integer(mpayroll2==0)]
+
+#Creo unas variables segun como arranca el feature, no uso la c por que se complica
+colnames<-colnames(dataset)
+Lista_m <- colnames[colnames %like% "^m"]
+
+Lista_t <- colnames[colnames %like% "^t"]## var_x vector que tiene las variables que empiezan con m
+
+dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
+
+dataset[ , suma_t := rowSums(.SD), .SDcols = Lista_t ]
+
+negativos <- c()
+otros <- c()
+
+rankear<- c('suma_m','suma_t','mcuenta_corriente','cdescubierto_preacordado','mcuentas_saldo','mcuentas_saldo')
+for (campo in rankear) {
+#Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  tryCatch(
+    {
+     # verifico que el campo sea de valores positivos
+      if (min(dataset[, get(campo)]) >= 0) {
+        dataset[, paste0("auto_r_", campo, sep = "") := (frankv(dataset, cols = campo) - 1) / (length(dataset[, get(campo)]) - 1)] # rankeo entre 0 y 1
+        dataset[, paste0(campo) := NULL] # elimino la variable original
+      } else {
+        negativos <- c(negativos, campo)
+      }
+    },
+    # por si algun campo no tiene valor minimo o hay un typo en la lista
+    error = function(e) {
+      otros <- c(otros, campo)
+    }
+  )
+}
+
+
 
 
 #--------------------------------------
@@ -77,6 +127,7 @@ dtrain  <- lgb.Dataset( data= data.matrix(  dataset[ train==1L, campos_buenos, w
 modelo  <- lgb.train( data= dtrain,
                       param= list( objective=          "binary",
                                    max_bin=            PARAM$finalmodel$max_bin,
+                                   max_depth =         PARAM$finalmodel$max_depth 
                                    learning_rate=      PARAM$finalmodel$learning_rate,
                                    num_iterations=     PARAM$finalmodel$num_iterations,
                                    num_leaves=         PARAM$finalmodel$num_leaves,
@@ -134,3 +185,4 @@ for( envios  in  cortes )
 #--------------------------------------
 
 quit( save= "no" )
+
