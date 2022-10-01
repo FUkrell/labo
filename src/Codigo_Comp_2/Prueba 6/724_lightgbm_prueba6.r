@@ -39,6 +39,15 @@ setwd( "~/buckets/b1" )
 dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
 
 
+#Creo unas variables segun como arranca el feature, no uso la c por que se complica
+colnames<-colnames(dataset)
+Lista_m <- colnames[colnames %like% "^m"]
+
+Lista_t <- colnames[colnames %like% "^t"]## var_x vector que tiene las variables que empiezan con m
+
+dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
+
+dataset[ , suma_t := rowSums(.SD), .SDcols = Lista_t ]
 #--------------------------------------
 
 #paso la clase a binaria que tome valores {0,1}  enteros
