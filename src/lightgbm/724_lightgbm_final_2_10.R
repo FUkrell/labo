@@ -41,29 +41,8 @@ dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
 #--------------------------------------
 
 #Feature engineering
-# dataset[ , campo1 := as.integer( (mcaja_ahorro<141.47) & ( mtarjeta_visa_consumo<1553.0 ) ) ]
-# dataset[ , campo2 := as.integer( (mcaja_ahorro<141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<1553.0  ) & ( mtarjeta_master_consumo<547.01 | is.na(mtarjeta_master_consumo) ) ) ]
-#dataset[ , campo3 := as.integer( (mcaja_ahorro<141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<1553.0  ) & ( mtarjeta_master_consumo>=547.01  ) ) ]
-# dataset[ , campo4 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<2003.7) & ( mpasivos_margen<231.5  ) ) ]
-#dataset[ , campo5 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo<2003.7) & ( mpasivos_margen<231.5 | is.na(mpasivos_margen) ) )  ]
-#dataset[ , campo6 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo>=2003.7 | is.na(mtarjeta_visa_consumo) ) & ( cpayroll_trx<1  ) ) ]
-#dataset[ , campo7 := as.integer( (mcaja_ahorro>=141.47 | is.na(mcaja_ahorro)) & ( mtarjeta_visa_consumo>=2003.7 | is.na(mtarjeta_visa_consumo) ) & ( cpayroll_trx>=1 | is.na(cpayroll_trx) ) ) ]
-#dataset[, Tienempayroll:=as.integer(mpayroll==0)]
-#dataset[, Tienempayroll2:=as.integer(mpayroll2==0)]
-
-
-
 #INICIO de la seccion donde se deben hacer cambios con variables nuevas
 
-# #creo un ctr_quarter que tenga en cuenta cuando los clientes hace 3 menos meses que estan
-# dataset[  , ctrx_quarter_normalizado := ctrx_quarter ]
-# dataset[ cliente_antiguedad==1 , ctrx_quarter_normalizado := ctrx_quarter * 5 ]
-# dataset[ cliente_antiguedad==2 , ctrx_quarter_normalizado := ctrx_quarter * 2 ]
-# dataset[ cliente_antiguedad==3 , ctrx_quarter_normalizado := ctrx_quarter * 1.2 ]
-# 
-# #variable extraida de una tesis de maestria de Irlanda
-# dataset[  , mpayroll_sobre_edad  := mpayroll / cliente_edad ]
-# 
 # # # suma loca
 # # dataset[ , suma_loca := sum(("columna1", "columna2")) ]
 # # # binning 
@@ -78,9 +57,7 @@ dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
 # #   }
 # #   cat( campo, " " )
 # # }
-# 
-# # para corregir el data drifting entre enero y marzo
-# # dapply[ ,mcuentas_saldo := mcuentas_saldo * 0.9523 ]
+
 # 
 # 
 # 
@@ -166,18 +143,6 @@ dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
 # }
 # 
 # 
-# 
-# #Creo unas variables segun como arranca el feature, no uso la c por que se complica
-# colnames<-colnames(dataset)
-#Lista_m <- colnames[colnames %like% "^m"]
-# 
-# Lista_t <- colnames[colnames %like% "^t"]## var_x vector que tiene las variables que empiezan con m
-# 
-#dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
-# 
-# dataset[ , suma_t := rowSums(.SD), .SDcols = Lista_t ]
-
-
 
 
 rankear<- c('mcuenta_corriente','mcuentas_saldo' ,
