@@ -36,14 +36,15 @@ hs <- makeParamSet(
          makeNumericParam("feature_fraction", lower=    0.2  , upper=    1.0),
          makeIntegerParam("min_data_in_leaf", lower=    0L   , upper=  8000L),
          makeIntegerParam("num_leaves",       lower=   16L   , upper=  1024L),
-         makeIntegerParam("envios",           lower= 5000L   , upper= 15000L)
+         makeIntegerParam("envios",           lower= 5000L   , upper= 15000L),
+         makeIntegerParam("max_bin",          lower = 10L     , upper = 100L)
         )
 
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM  <- list()
 
-PARAM$experimento  <- "HT7231"
+PARAM$experimento  <- "HT7231_2"
 
 PARAM$input$dataset       <- "./datasets/competencia2_2022.csv.gz"
 PARAM$input$training      <- c( 202103 )
@@ -51,7 +52,7 @@ PARAM$input$training      <- c( 202103 )
 PARAM$trainingstrategy$undersampling  <-  1.0   # un undersampling de 0.1  toma solo el 10% de los CONTINUA
 PARAM$trainingstrategy$semilla_azar   <- 581333  #Aqui poner la propia semilla
 
-PARAM$hyperparametertuning$iteraciones <- 100
+PARAM$hyperparametertuning$iteraciones <- 20 # cantidad de iteraciones inteligentes que hace la bayesiana, se puede reducir a 50 para mayor velocidad. 
 PARAM$hyperparametertuning$xval_folds  <- 5
 PARAM$hyperparametertuning$POS_ganancia  <- 78000
 PARAM$hyperparametertuning$NEG_ganancia  <- -2000
@@ -128,7 +129,6 @@ EstimarGanancia_lightgbm  <- function( x )
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                           lambda_l1= 0.0,         #por ahora, lo dejo fijo
                           lambda_l2= 0.0,         #por ahora, lo dejo fijo
-                          max_bin= 31,            #por ahora, lo dejo fijo
                           num_iterations= 9999,   #un numero muy grande, lo limita early_stopping_rounds
                           force_row_wise= TRUE,   #para que los alumnos no se atemoricen con tantos warning
                           seed= PARAM$hyperparametertuning$semilla_azar
@@ -189,7 +189,7 @@ EstimarGanancia_lightgbm  <- function( x )
 #Aqui empieza el programa
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd( "D:\\Maestria\\DMEyF\\" )   #Establezco el Working Directory
+setwd( "D:\\Maestria\\DMEyF\\" )  #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar el modelo
 dataset  <- fread( PARAM$input$dataset )
@@ -215,8 +215,57 @@ if( file.exists(klog) )
   GLOBAL_iteracion  <- nrow( tabla_log )
   GLOBAL_gananciamax  <- tabla_log[ , max( ganancia ) ]
 }
+colnames<-colnames(dataset)
+Lista_m <- colnames[colnames %like% "^m"]
+dataset[ , suma_m := rowSums(.SD), .SDcols = Lista_m ]
+
+rankear<- c('mcuenta_corriente','mcuentas_saldo' ,
+            "mcaja_ahorro", "mcomisiones_mantenimiento", 
+            "mcomisiones", "Master_Fvencimiento", 
+            "mcomisiones_otras")
+# setdiff( colnames(dataset), "clase_ternaria" ) todas las col excepto ternaria
 
 
+for( campo in rankear )
+{
+  if(  dataset[ get(campo) < 0, .N ]  > 0 ) {
+    dataset[   , paste0( campo, "_neg" ) := ifelse( get(campo)< 0, get(campo), NA ) ]
+    dataset[   , paste0( campo, "_pos" ) := ifelse( get(campo)> 0, get(campo), NA ) ]
+    dataset[, paste0(campo) := NULL] # elimino la variable original
+  }}
+dataset_ene  <- dataset[ foto_mes== 202101 ]
+dataset_feb  <- dataset[ foto_mes== 202102 ]
+dataset_mar  <- dataset[ foto_mes== 202103 ]
+dataset_abr  <- dataset[ foto_mes== 202104 ]
+dataset_may  <- dataset[ foto_mes== 202105 ]
+
+hist(dataset$mcuentas_saldo, xlim = c(-110,20000000), breaks = 1000)
+hist(dataset$cprestamos_personales,xlim = c(0,20), breaks=300)
+hist(dataset$mprestamos_personales,xlim = c(-10,2000000), breaks=300)
+hist(dataset$mcaja_ahorro,xlim = c(-100,20000), breaks=300)
+
+
+rankear<- c('mcuenta_corriente_pos','mcuentas_saldo_pos' , "mcaja_ahorro_pos", "mcomisiones_mantenimiento_pos", 
+            "mcomisiones_pos",  "Master_Fvencimiento_pos", 
+            "mcomisiones_otras_pos", 'mcuenta_corriente_neg','mcuentas_saldo_neg' , 
+            "mcaja_ahorro_neg", "mcomisiones_mantenimiento_neg",
+            "mcomisiones_neg", "Master_Fvencimiento_neg", 
+            "mcomisiones_otras_neg")
+
+for (campo in rankear) {
+  #Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  {  dataset_mar[, paste0("auto_r_", campo, sep = "") := (frankv(dataset_mar, cols = campo) - 1) / (length(dataset_mar[, get(campo)]) - 1)] # rankeo entre 0 y 1
+    dataset_mar[, paste0(campo) := NULL] # elimino la variable original 
+  }}
+
+for (campo in rankear) {
+  #Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  {  dataset_may[, paste0("auto_r_", campo, sep = "") := (frankv(dataset_may, cols = campo) - 1) / (length(dataset_may[, get(campo)]) - 1)] # rankeo entre 0 y 1
+    dataset_may[, paste0(campo) := NULL] # elimino la variable original 
+  }}
+
+names(dataset_mar)
+dataset <- rbind(dataset_mar, dataset_may)
 
 #paso la clase a binaria que tome valores {0,1}  enteros
 dataset[ foto_mes %in% PARAM$input$training, clase01 := ifelse( clase_ternaria=="CONTINUA", 0L, 1L) ]

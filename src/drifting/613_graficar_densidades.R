@@ -46,6 +46,61 @@ setwd( "D:\\Maestria\\DMEyF\\" )
 #cargo el dataset donde voy a entrenar
 dataset  <- fread("./datasets/competencia2_2022.csv.gz")
 
+rankear<- c('mcuenta_corriente','mcuentas_saldo' ,
+            "mcaja_ahorro", "mcomisiones_mantenimiento", 
+            "mcomisiones", "Master_Fvencimiento", 
+            "mcomisiones_otras")
+# setdiff( colnames(dataset), "clase_ternaria" ) todas las col excepto ternaria
+
+
+
+for( campo in rankear )
+{
+  if(  dataset[ get(campo) < 0, .N ]  > 0 ) {
+    dataset[   , paste0( campo, "_neg" ) := ifelse( get(campo)< 0, get(campo), NA ), by =dataset$foto_mes ]
+    dataset[   , paste0( campo, "_pos" ) := ifelse( get(campo)> 0, get(campo), NA ), by =dataset$foto_mes ]
+    dataset[, paste0(campo) := NULL] # elimino la variable original
+  }}
+dataset_ene  <- dataset[ foto_mes== 202101 ]
+# dataset_feb  <- dataset[ foto_mes== 202102 ]
+dataset_mar  <- dataset[ foto_mes== 202103 ]
+# dataset_abr  <- dataset[ foto_mes== 202104 ]
+dataset_may  <- dataset[ foto_mes== 202105 ]
+# 
+# hist(dataset$mcuentas_saldo, xlim = c(-110,20000000), breaks = 1000)
+# hist(dataset$cprestamos_personales,xlim = c(0,20), breaks=300)
+# hist(dataset$mprestamos_personales,xlim = c(-10,2000000), breaks=300)
+# hist(dataset$mcaja_ahorro,xlim = c(-100,20000), breaks=300)
+
+
+rankear<- c('mcuenta_corriente_pos','mcuentas_saldo_pos' , "mcaja_ahorro_pos", "mcomisiones_mantenimiento_pos", 
+            "mcomisiones_pos",  "Master_Fvencimiento_pos", 
+            "mcomisiones_otras_pos", 'mcuenta_corriente_neg','mcuentas_saldo_neg' , 
+            "mcaja_ahorro_neg", "mcomisiones_mantenimiento_neg",
+            "mcomisiones_neg", "Master_Fvencimiento_neg", "cliente_edad",
+            "mcomisiones_otras_neg")
+
+for (campo in rankear) {
+  #Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  {  dataset_ene[, paste0("auto_r_", campo, sep = "") := (frankv(dataset_ene, cols = campo) - 1) / (length(dataset_ene[, get(campo)]) - 1), by =dataset_ene$foto_mes] # rankeo entre 0 y 1
+    dataset_ene[, paste0(campo) := NULL] # elimino la variable original 
+  }}
+
+for (campo in rankear) {
+  #Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  {  dataset_mar[, paste0("auto_r_", campo, sep = "") := (frankv(dataset_mar, cols = campo) - 1) / (length(dataset_mar[, get(campo)]) - 1), by =dataset_mar$foto_mes] # rankeo entre 0 y 1
+    dataset_mar[, paste0(campo) := NULL] # elimino la variable original 
+  }}
+
+for (campo in rankear) {
+  #Si algún campo falla en el if lo mando a la lista otros Creditos a Nicolas Nuñez Manzano por el armado del codigo que separa en neg y pos con rankeo
+  {  dataset_may[, paste0("auto_r_", campo, sep = "") := (frankv(dataset_may, cols = campo) - 1) / (length(dataset_may[, get(campo)]) - 1)] # rankeo entre 0 y 1
+    dataset_may[, paste0(campo) := NULL] # elimino la variable original
+  }}
+
+names(dataset_mar)
+dataset <- rbind(dataset_mar, dataset_may, dataset_ene)
+
 dataset  <- dataset[  foto_mes %in% c( 202101, 202103 ) ]
 
 #creo la clase_binaria SI={ BAJA+1, BAJA+2 }    NO={ CONTINUA }
