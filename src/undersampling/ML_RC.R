@@ -13,7 +13,7 @@ require("data.table")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento  <- "CA9060_EC" # modifico aca para hacerlo de forma EstadisticaClasica
+PARAM$experimento  <- "CA9060_ML" # modifico aca para hacerlo de forma EstadisticaClasica
 PARAM$dataset  <- "./datasets/competencia3_2022.csv.gz"
 
 PARAM$metodo  <- "EstadisticaClasica"     #valores posibles  "MachineLearning"  "EstadisticaClasica"
@@ -250,9 +250,9 @@ require("data.table")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento  <- "DR9141_EC_RC"
+PARAM$experimento  <- "DR9141_ML_RC"
 
-PARAM$exp_input  <- "CA9060_EC" # cambio esto si cambio el metodo a estadistica clasica
+PARAM$exp_input  <- "CA9060_ML" # cambio esto si cambio el metodo a estadistica clasica
 
 #valores posibles  "ninguno" "rank_simple" , "rank_cero_fijo" , "deflacion"
 PARAM$metodo  <- "deflacion" # probar otras versiones, probar sin data drifting
@@ -484,9 +484,9 @@ require("lightgbm")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento <- "FE9250_EC_RC"
+PARAM$experimento <- "FE9250_ML_RC"
 
-PARAM$exp_input  <- "DR9141_EC_RC"
+PARAM$exp_input  <- "DR9141_ML_RC"
 
 PARAM$lag1  <- TRUE
 PARAM$lag2  <- FALSE
