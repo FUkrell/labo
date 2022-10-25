@@ -16,7 +16,7 @@ PARAM  <- list()
 PARAM$experimento  <- "CA9060_ML" # modifico aca para hacerlo de forma EstadisticaClasica
 PARAM$dataset  <- "./datasets/competencia3_2022.csv.gz"
 
-PARAM$metodo  <- "EstadisticaClasica"     #valores posibles  "MachineLearning"  "EstadisticaClasica"
+PARAM$metodo  <- "MachineLearning"     #valores posibles  "MachineLearning"  "EstadisticaClasica"
 # FIN Parametros del script
 
 
