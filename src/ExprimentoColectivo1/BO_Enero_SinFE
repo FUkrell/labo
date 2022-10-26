@@ -211,7 +211,7 @@ ksemillas <- c(671017, 273107, 827251, 967693, 247591,795941,284723,950527,73516
 #Aqui empieza el programa
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("~/buckets/b1/")   #Establezco el Working Directory
+setwd("C:\\Users\\PC\\Desktop\\Especializacion UBA\\DMEyF")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar el modelo
 dataset  <- fread( PARAM$input$dataset )
