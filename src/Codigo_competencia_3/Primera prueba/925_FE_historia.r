@@ -388,36 +388,14 @@ if( PARAM$Tendencias )
                       cols= cols_lagueables,
                       ventana=   6,      # 6 meses de historia
                       tendencia= TRUE,
-                      minimo=    FALSE,
-                      maximo=    FALSE,
+                      minimo=    TRUE,
+                      maximo=    TRUE,
                       promedio=  TRUE,
                       ratioavg=  FALSE,
                       ratiomax=  FALSE  )
 }
 
 
-#estas son las columnas a las que se puede agregar lags o media moviles ( todas menos las obvias )
-cols_lagueables  <- copy(  setdiff( colnames(dataset), c("numero_de_cliente", "foto_mes", "clase_ternaria")  ) )
-
-#--------------------------------------
-#agrego las tendencias
-
-#ordeno el dataset por <numero_de_cliente, foto_mes> para poder hacer lags
-#  es MUY  importante esta linea
-setorder( dataset, numero_de_cliente, foto_mes )
-
-if( PARAM$Tendencias )
-{
-  TendenciaYmuchomas( dataset, 
-                      cols= cols_lagueables,
-                      ventana=   6,      # 6 meses de historia
-                      tendencia= TRUE,
-                      minimo=    FALSE,
-                      maximo=    FALSE,
-                      promedio=  TRUE,
-                      ratioavg=  FALSE,
-                      ratiomax=  FALSE  )
-}
 #------------------------------------------------------------------------------
 #Agrego variables a partir de las hojas de un Random Forest
 
