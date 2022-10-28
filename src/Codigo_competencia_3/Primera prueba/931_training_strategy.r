@@ -20,7 +20,7 @@ PARAM$exp_input  <- "FE9250"
 
 PARAM$future       <- c( 202107 )
 
-PARAM$final_train  <- c( 202007,202011, 202012,202103, 202104, 202105 ) #Dejo el ultimo Julio, veremos si se parece a este.
+PARAM$final_train  <- c( 202007,202010, 202011, 202012 ,202101, 202102,202103, 202104, 202105 ) #Dejo el ultimo Julio, veremos si se parece a este.
 
 PARAM$train$training     <- c( 202007, 202008, 202009,202010, 202011, 202012 ,202101, 202102, 202103) #Quiero entrenar en mas meses
 PARAM$train$validation   <- c( 202104 )
