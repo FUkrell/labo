@@ -30,8 +30,8 @@ setwd( "~/buckets/b1/" )
 # pero podria leer cualquiera que tenga Feature Engineering
 dataset  <- fread( "./datasets/competencia3_2022.csv.gz", stringsAsFactors= TRUE)
 
-dataset[  , azar := runif(  nrow(dataset) ]
-dataset  <-  dataset[  clase_ternaria=="CONTINUA"  & azar <  0.1 ]
+dataset[  , azar := runif(  nrow(dataset)) ]
+dataset  <-  dataset[  clase_ternaria=="CONTINUA"  & azar <  0.05 ]
 #creo la carpeta donde va el experimento
 dir.create( paste0( "./exp/", PARAM$experimento, "/"), showWarnings = FALSE )
 setwd(paste0( "./exp/", PARAM$experimento, "/"))   #Establezco el Working Directory DEL EXPERIMENTO
