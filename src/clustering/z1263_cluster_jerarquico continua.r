@@ -18,7 +18,7 @@ require("ranger")
 
 #Parametros del script
 PARAM <- list()
-PARAM$experimento  <- "CLU1262"
+PARAM$experimento  <- "CLU1263"
 # FIN Parametros del script
 
 #------------------------------------------------------------------------------
