@@ -27,7 +27,7 @@ PARAM$lag1  <- TRUE
 PARAM$lag2  <- TRUE
 PARAM$lag3  <- TRUE
 PARAM$Tendencias  <- TRUE
-PARAM$RandomForest  <- TRUE          
+PARAM$RandomForest  <- FALSE          
 PARAM$CanaritosAsesinos  <- TRUE
 # FIN Parametros del script
 
