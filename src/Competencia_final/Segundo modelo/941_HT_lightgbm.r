@@ -21,7 +21,7 @@ require("mlrMBO")
 PARAM  <- list()
 PARAM$experimento <- "HT10411"
 
-PARAM$exp_input  <- "T109311"
+PARAM$exp_input  <- "TS10311"
 # FIN Parametros del script
 
 
@@ -79,7 +79,7 @@ hs <- makeParamSet(
 
 
 #si usted es ambicioso, y tiene paciencia, podria subir este valor a 100
-kBO_iteraciones  <- 50  #iteraciones de la Optimizacion Bayesiana
+kBO_iteraciones  <- 16  #iteraciones de la Optimizacion Bayesiana
 
 #------------------------------------------------------------------------------
 #graba a un archivo los componentes de lista
