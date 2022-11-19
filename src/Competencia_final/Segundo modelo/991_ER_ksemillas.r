@@ -27,7 +27,7 @@ dataset  <- fread( PARAM$dataset )
 
 
 #leo las semillas usadas en la prediccion 
-arch_semillas  <- paste0( "./exp/comp_final/", PARAM$exp_input, "/ksemillas.csv" )
+arch_semillas  <- paste0( "./exp/", PARAM$exp_input, "/ksemillas.csv" )
 semillas_data  <- c(fread( arch_semillas )[,1])
 
 #creo lista de semillas usadas
@@ -41,7 +41,7 @@ data_eval  <- dataset[ foto_mes== 202109,c("numero_de_cliente")]
 
 #itero en los resultados por semillas y hago join by numero de cliente
 for (semilla in semillas){
-  data_semilla <- fread(paste0('./exp/comp_final/',PARAM$exp_input,'/',PARAM$exp_input,semilla,'_resultados.csv'))
+  data_semilla <- fread(paste0('./exp/',PARAM$exp_input,'/',PARAM$exp_input,semilla,'_resultados.csv'))
   data_semilla <- data_semilla[ ,c("numero_de_cliente", "rank")] #"rank" ó "prob"
   colnames(data_semilla) <- c("numero_de_cliente", semilla)
   data_eval <- data_eval[data_semilla, on = c("numero_de_cliente")]  
@@ -55,8 +55,8 @@ setorder(semillerio, mean)
 #setorder(semillerio, -mean)
 
 #creo la carpeta donde va el experimento
-dir.create( paste0( "./exp/comp_final/", PARAM$experimento, "/"), showWarnings = FALSE )
-setwd(paste0( "./exp/comp_final/", PARAM$experimento, "/"))   #Establezco el Working Directory DEL EXPERIMENTO
+dir.create( paste0( "./exp/", PARAM$experimento, "/"), showWarnings = FALSE )
+setwd(paste0( "./exp/", PARAM$experimento, "/"))   #Establezco el Working Directory DEL EXPERIMENTO
 
 
 #genero los archivos para Kaggle
