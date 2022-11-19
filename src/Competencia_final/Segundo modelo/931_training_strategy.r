@@ -18,7 +18,7 @@ PARAM$experimento <- "TS10311"
 
 PARAM$exp_input  <- "FE10251"
 
-PARAM$future       <- c( 202107 )
+PARAM$future       <- c( 202109 )
 
 PARAM$final_train  <- c( 202011, 202012 ,202101, 202102,202103, 202104, 202105, 202106, 202107 ) #Dejo el ultimo Julio, veremos si se parece a este.
 
