@@ -20,11 +20,12 @@ PARAM$exp_input  <- "FE10300"
 
 PARAM$future       <- c( 202109 )
 
-PARAM$final_train  <- c( 202011, 202012 ,202101, 202102,202103, 202104, 202105, 202106, 202107 ) #Dejo el ultimo Julio, veremos si se parece a este.
+PARAM$final_train  <- c( 201912, 202101, 202102, 202103, 202104, 202105, 202106, 202107 )
 
-PARAM$train$training     <- c( 202009,202010, 202011, 202012 ,202101, 202102, 202103, 202104, 202105) #Quiero entrenar en mas meses
+PARAM$train$training     <- c( 201910, 201911, 201912, 202101, 202102, 202103, 202104, 202105 )
 PARAM$train$validation   <- c( 202106 )
 PARAM$train$testing      <- c( 202107 )
+
 PARAM$train$undersampling  <- 1.0   # 1.0 significa NO undersampling ,  0.1  es quedarse con el 10% de los CONTINUA
 PARAM$train$semilla  <- 100003
 # FIN Parametros del script
